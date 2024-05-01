@@ -1,4 +1,4 @@
-package t1
+package script
 
 import (
 	"fmt"
@@ -19,11 +19,11 @@ func ToUpper() {
 	script.File("../../testdata/test.txt").FilterLine(strings.ToUpper).Stdout()
 }
 
-// Exec test
-func Ping() {
-	script.Exec("ping 127.0.0.1").Stdout()
+func Ping(addr string) {
+	script.Exec(fmt.Sprintf("ping %s", addr)).Stdout()
 }
 
+// Exec test
 func ExecGoVersion() {
 	script.Exec("go version").Stdout()
 }

@@ -7,6 +7,7 @@ import (
 	_exec "os/exec"
 )
 
+// Can be overridden from Taskfile
 func run(command string, args ...string) {
 	cmd := _exec.Command(command, args...)
 	cmd.Stdout = _os.Stdout

@@ -1,4 +1,4 @@
-package t1
+package env
 
 import (
 	"fmt"
