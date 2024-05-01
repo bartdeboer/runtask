@@ -60,24 +60,35 @@ func mergeASTs(files ...*ast.File) *ast.File {
 		Specs: []ast.Spec{},
 	}
 	newFile := &ast.File{
-		Name: ast.NewIdent("main"),
-		Decls: []ast.Decl{
-			newImportDecl,
-		},
+		Name:  ast.NewIdent("main"),
+		Decls: []ast.Decl{newImportDecl},
 	}
+
+	funcMap := make(map[string]*ast.FuncDecl)
+
 	for _, file := range files {
 		for _, decl := range file.Decls {
-			if importDecl, ok := decl.(*ast.GenDecl); ok && importDecl.Tok == token.IMPORT {
-				for _, spec := range importDecl.Specs {
-					if importSpec, ok := spec.(*ast.ImportSpec); ok {
-						newImportDecl.Specs = append(newImportDecl.Specs, importSpec)
+			switch t := decl.(type) {
+			case *ast.GenDecl:
+				if t.Tok == token.IMPORT {
+					for _, spec := range t.Specs {
+						if importSpec, ok := spec.(*ast.ImportSpec); ok {
+							newImportDecl.Specs = append(newImportDecl.Specs, importSpec)
+						}
 					}
 				}
-			} else {
+			case *ast.FuncDecl:
+				funcMap[t.Name.Name] = t
+			default:
 				newFile.Decls = append(newFile.Decls, decl)
 			}
 		}
 	}
+
+	for _, funcDecl := range funcMap {
+		newFile.Decls = append(newFile.Decls, funcDecl)
+	}
+
 	return newFile
 }
 

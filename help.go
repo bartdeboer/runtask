@@ -15,7 +15,7 @@ func basicHelp() {
 	fmt.Println()
 }
 
-func tasksHelp(functions map[string]string, comments map[string]string, taskArgs map[string][]string) {
+func tasksHelp(functions map[string]string, comments map[string]string) {
 	colWidth := 15
 	totalWidth := 80
 	fmt.Println("Available tasks:")
@@ -38,12 +38,13 @@ func tasksHelp(functions map[string]string, comments map[string]string, taskArgs
 		}
 		fmt.Printf(formatStr, taskName, comment)
 	}
+
 	fmt.Println()
 	fmt.Printf(formatStr, "help [task]", "Show details about a task")
 	fmt.Println()
 }
 
-func taskHelp(taskName string, functions map[string]string, comments map[string]string, args map[string][]string) {
+func taskHelp(taskName string, comments map[string]string, args map[string][]string) {
 
 	programName := strings.TrimSuffix(filepath.Base(os.Args[0]), ".exe")
 

@@ -33,3 +33,13 @@ func Add2(arg1 float64, args ...int) {
 	}
 	fmt.Printf("%.3f %d\n", arg1, total)
 }
+
+// Override run function
+func run() {
+	fmt.Println("Overridden")
+}
+
+// Run task
+func Run() {
+	run()
+}

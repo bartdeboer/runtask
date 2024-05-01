@@ -33,7 +33,7 @@ func runTask() error {
 		basicHelp()
 	}
 
-	taskSrc, err := readTaskfile([]string{"Taskfile", "Taskfile.go"})
+	taskSrc, err := readTaskfile([]string{"Taskfile", "Taskfile.go", "tasks/Taskfile.go"})
 	if err != nil {
 		return err
 	}
@@ -56,19 +56,20 @@ func runTask() error {
 	ast := mergeASTs(ast1, ast2)
 
 	if len(os.Args) < 2 || (len(os.Args) == 2 && os.Args[1] == "help") {
-		tasksHelp(extractTasks(ast))
+		tasks, comments, _ := extractTasks(ast)
+		tasksHelp(tasks, comments)
 		return nil
 	}
 
 	taskName := strings.ToLower(os.Args[1])
 	args := os.Args[2:]
-	tasks, taskComments, taskArgs := extractTasks(ast)
+	tasks, comments, taskArgs := extractTasks(ast)
 
 	if taskName == "help" && len(os.Args) >= 3 {
 		if _, ok := tasks[os.Args[2]]; !ok {
 			return fmt.Errorf("no such task: %s", os.Args[2])
 		}
-		taskHelp(os.Args[2], tasks, taskComments, taskArgs)
+		taskHelp(os.Args[2], comments, taskArgs)
 		return nil
 	}
 
