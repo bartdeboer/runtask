@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/bartdeboer/runtask/yaegilib"
 	"github.com/traefik/yaegi/interp"
 	"github.com/traefik/yaegi/stdlib"
@@ -8,7 +10,9 @@ import (
 )
 
 func newInterpreter() *interp.Interpreter {
-	i := interp.New(interp.Options{})
+	i := interp.New(interp.Options{
+		Env: os.Environ(),
+	})
 	i.Use(stdlib.Symbols)
 	i.Use(unrestricted.Symbols)
 	i.Use(yaegilib.Symbols)

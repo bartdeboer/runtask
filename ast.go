@@ -10,33 +10,29 @@ import (
 	"go/printer"
 	"go/token"
 	"strings"
+	"unicode"
 )
 
-func ensurePackageDeclaration(code, name string) string {
+func overridePackageDecl(code, name string) string {
 	scanner := bufio.NewScanner(strings.NewReader(code))
-	hasPackage := false
+	var builder strings.Builder
+	builder.WriteString("package " + name + "\n")
 
 	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" {
+		line := scanner.Text()
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "package ") {
 			continue
 		}
-		if strings.HasPrefix(line, "package ") {
-			hasPackage = true
-			break
-		}
-		break
+
+		builder.WriteString(line + "\n")
 	}
 
-	if hasPackage {
-		return code // Return original code if package declaration exists
-	} else {
-		return "package " + name + "\n\n" + code // Prepend 'package main' if no package declaration
-	}
+	return builder.String()
 }
 
-func parseSource(fset *token.FileSet, src string) (*ast.File, error) {
-	src = ensurePackageDeclaration(src, "main")
+func parseSource(fset *token.FileSet, src, name string) (*ast.File, error) {
+	src = overridePackageDecl(src, name)
 	return parser.ParseFile(fset, "", src, parser.ParseComments)
 }
 
@@ -85,32 +81,31 @@ func mergeASTs(files ...*ast.File) *ast.File {
 	return newFile
 }
 
-func findTasks(file *ast.File) ([]string, map[string]string, map[string][]string) {
-	var functions []string
+func extractTasks(file *ast.File) (map[string]string, map[string]string, map[string][]string) {
+	functions := make(map[string]string)
 	comments := make(map[string]string)
-	argNames := make(map[string][]string) // Added to store argument names
+	argNames := make(map[string][]string)
 
-	// Loop through the declarations in the file
 	for _, decl := range file.Decls {
-		// Check if the declaration is a function
 		if fn, ok := decl.(*ast.FuncDecl); ok {
-			// Skip methods and functions named "r"
-			if fn.Recv != nil || fn.Name.Name == "run" || fn.Name.Name == "env" {
+
+			funcName := fn.Name.Name
+
+			// Only handle "exported" functions
+			if fn.Recv != nil || !unicode.IsUpper(rune(funcName[0])) {
 				continue
 			}
-			name := fn.Name.Name
-			functions = append(functions, name)
+			taskName := strings.ToLower(funcName)
+			functions[taskName] = funcName
 
-			// Process documentation comments
+			// Comments
 			var comment string
 			if fn.Doc != nil {
-				for _, astComment := range fn.Doc.List {
-					comment += " " + strings.TrimSpace(astComment.Text)
-				}
+				comment = strings.TrimSpace(fn.Doc.Text())
 			}
-			comments[name] = comment
+			comments[taskName] = comment
 
-			// Extracting argument names
+			// Argument
 			var args []string
 			if fn.Type.Params != nil {
 				for _, param := range fn.Type.Params.List {
@@ -119,7 +114,7 @@ func findTasks(file *ast.File) ([]string, map[string]string, map[string][]string
 					}
 				}
 			}
-			argNames[name] = args
+			argNames[taskName] = args
 		}
 	}
 

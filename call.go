@@ -38,7 +38,7 @@ func convertToType(value string, targetType reflect.Type) (reflect.Value, error)
 	}
 
 	if err != nil {
-		return reflect.Value{}, fmt.Errorf("error converting string to %s: %v", targetType, err)
+		return reflect.Value{}, fmt.Errorf("converting string to %s: %v", targetType, err)
 	}
 
 	return convertedValue, nil
@@ -49,6 +49,11 @@ func callFunc(fn reflect.Value, args []string) ([]reflect.Value, error) {
 	fnType := fn.Type()
 	numArgs := fnType.NumIn()
 	isVariadic := fnType.IsVariadic()
+
+	if isVariadic && len(args) < numArgs-1 ||
+		!isVariadic && len(args) != numArgs {
+		return nil, fmt.Errorf("wrong parameter count")
+	}
 
 	for i, argValue := range args {
 		var argType reflect.Type
@@ -63,7 +68,7 @@ func callFunc(fn reflect.Value, args []string) ([]reflect.Value, error) {
 		// Convert the argument to the required type
 		convertedArg, err := convertToType(argValue, argType)
 		if err != nil {
-			return nil, fmt.Errorf("error converting argument %d for function %v: %v", i, fnType.Name(), err)
+			return nil, fmt.Errorf("converting argument %d: %v", i, err)
 		}
 		inArgs = append(inArgs, convertedArg)
 	}

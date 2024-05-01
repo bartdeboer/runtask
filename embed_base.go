@@ -18,11 +18,3 @@ func run(command string, args ...string) {
 		_os.Exit(1)
 	}
 }
-
-func env(vars map[string]string) {
-	for key, val := range vars {
-		if err := _os.Setenv(key, val); err != nil {
-			_fmt.Printf("Error setting environment variableCommand failed with: %s\n", err)
-		}
-	}
-}

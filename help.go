@@ -2,58 +2,72 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"sort"
 	"strings"
 )
 
-func displayTasks2(functions []string, comments map[string]string, argNames map[string][]string) {
-	for _, functionName := range functions {
-		fmt.Printf("Task: %s\n", functionName)
-		if args, ok := argNames[functionName]; ok && len(args) > 0 {
-			fmt.Printf("Arguments: %s\n", strings.Join(args, ", "))
-		} else {
-			fmt.Printf("Arguments: None\n")
-		}
-		if comment, ok := comments[functionName]; ok && len(strings.TrimSpace(comment)) > 0 {
-			fmt.Printf("Description:%s\n", comment)
-		} else {
-			fmt.Printf("Description: No description available.\n")
-		}
-		fmt.Println(strings.Repeat("-", 80)) // Print a separator line
-	}
+func basicHelp() {
+	programName := strings.TrimSuffix(filepath.Base(os.Args[0]), ".exe")
+	fmt.Println()
+	fmt.Printf("Usage:  %s TASK [ARG...]\n", programName)
+	fmt.Println()
 }
 
-func displayTasks(functions []string, comments map[string]string, argNames map[string][]string) {
-	// Determine the maximum width needed for the command and its arguments
-	maxWidth := 20
+func tasksHelp(functions map[string]string, comments map[string]string, taskArgs map[string][]string) {
 	colWidth := 15
-	for _, functionName := range functions {
-		command := functionName
-		if args, ok := argNames[functionName]; ok {
-			command += " " + strings.Join(args, " ")
-		}
-		if len(command) > colWidth {
-			colWidth = len(command)
+	totalWidth := 80
+	fmt.Println("Available tasks:")
+	fmt.Println()
+
+	taskNames := make([]string, 0, len(functions))
+	for taskName := range functions {
+		taskNames = append(taskNames, taskName)
+		if len(taskName) > colWidth {
+			colWidth = len(taskName)
 		}
 	}
+	sort.Strings(taskNames)
 
-	// Format and display each command and its description
-	for _, functionName := range functions {
-		command := functionName
-		if args, ok := argNames[functionName]; ok {
-			command += " " + strings.Join(args, " ")
+	formatStr := fmt.Sprintf("   %%-%ds    %%s\n", colWidth)
+	for _, taskName := range taskNames {
+		comment := comments[taskName]
+		if len(comment) > totalWidth-colWidth-4 {
+			comment = comment[:totalWidth-colWidth-4-3] + "..."
 		}
-		comment, _ := comments[functionName]
-		comment = strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(comments[functionName]), "//"))
-
-		// Print command with padding to align comments
-		if colWidth > maxWidth {
-			formatStr := fmt.Sprintf("   %%-%ds    %%s\n", maxWidth)
-			fmt.Printf("   %s\n", command)
-			fmt.Printf(formatStr, "", comment)
-			fmt.Println()
-		} else {
-			formatStr := fmt.Sprintf("   %%-%ds    %%s\n", colWidth)
-			fmt.Printf(formatStr, command, comment)
-		}
+		fmt.Printf(formatStr, taskName, comment)
 	}
+	fmt.Println()
+	fmt.Printf(formatStr, "help [task]", "Show details about a task")
+	fmt.Println()
+}
+
+func taskHelp(taskName string, functions map[string]string, comments map[string]string, args map[string][]string) {
+
+	programName := strings.TrimSuffix(filepath.Base(os.Args[0]), ".exe")
+
+	if taskName == "help" {
+		fmt.Println()
+		fmt.Printf("Usage:  %s help COMMAND\n", programName)
+		fmt.Println()
+		fmt.Println("Show details about a task")
+		fmt.Println()
+		return
+	}
+
+	var taskArgs []string
+
+	comment, _ := comments[taskName]
+	taskArgs, ok := args[taskName]
+
+	if !ok {
+		taskArgs = []string{}
+	}
+
+	fmt.Println()
+	fmt.Printf("Usage:  %s %s %s\n", programName, taskName, strings.Join(taskArgs, " "))
+	fmt.Println()
+	fmt.Println(comment)
+	fmt.Println()
 }

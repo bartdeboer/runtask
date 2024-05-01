@@ -8,7 +8,11 @@ import (
 )
 
 func readDotEnv(filePath string) error {
+
 	file, err := os.Open(filePath)
+	if os.IsNotExist(err) {
+		return nil
+	}
 	if err != nil {
 		return err
 	}
@@ -17,6 +21,7 @@ func readDotEnv(filePath string) error {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
+
 		if line = strings.TrimSpace(line); line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -28,6 +33,7 @@ func readDotEnv(filePath string) error {
 
 		key := strings.TrimSpace(parts[0])
 		value := strings.TrimSpace(parts[1])
+
 		if err := os.Setenv(key, value); err != nil {
 			return err
 		}
