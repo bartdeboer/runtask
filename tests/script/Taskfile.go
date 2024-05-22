@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/bitfield/script"
+	"github.com/bartdeboer/script/v2"
 )
 
 // Script file test

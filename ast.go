@@ -76,6 +76,8 @@ func mergeASTs(files ...*ast.File) *ast.File {
 							newImportDecl.Specs = append(newImportDecl.Specs, importSpec)
 						}
 					}
+				} else {
+					newFile.Decls = append(newFile.Decls, decl)
 				}
 			case *ast.FuncDecl:
 				funcMap[t.Name.Name] = t

@@ -83,6 +83,8 @@ func runTask() error {
 		return fmt.Errorf("failed reading .env: %v", err)
 	}
 
+	// fmt.Println(astToString(fset, ast))
+
 	i := newInterpreter()
 
 	_, err = i.Eval(astToString(fset, ast))

@@ -51,9 +51,11 @@ Runtask looks for the following files:
 * `Taskfile.go`
 * `tasks/Taskfile.go`
 
-A package name is optional but can be helpful for enabling language support features
+A package name is optional but can be helpful for enabling language support features.
+
+Includes support for .env files.
 
 Runtask uses [traefik/yaegi](https://github.com/traefik/yaegi) as its Go interpreter.
 
-Next to Go's standard library, it also includes [bitfield/script](https://github.com/bitfield/script)
-for convenience.
+Next to Go's standard library, [bitfield/script](https://github.com/bitfield/script) is
+included for convenience.
