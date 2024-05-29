@@ -1,4 +1,4 @@
-package main
+package main_test
 
 import (
 	"fmt"
@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	. "github.com/bartdeboer/runtask"
 )
 
 type TestTask struct {
@@ -47,7 +49,7 @@ func runTestTask(task TestTask, t *testing.T) {
 	}()
 
 	// Execute the task
-	taskErr := runTask()
+	taskErr := RunTask()
 
 	if err != nil {
 		t.Fatalf("Failed testing task: %s", err)

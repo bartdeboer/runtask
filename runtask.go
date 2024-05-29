@@ -25,7 +25,7 @@ func readTaskfile(files []string) ([]byte, error) {
 	return nil, fmt.Errorf("could not find Taskfile")
 }
 
-func runTask() error {
+func RunTask() error {
 
 	fset := token.NewFileSet()
 
@@ -105,7 +105,7 @@ func runTask() error {
 }
 
 func main() {
-	if err := runTask(); err != nil {
+	if err := RunTask(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
 	}

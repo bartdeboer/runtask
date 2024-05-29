@@ -80,7 +80,17 @@ func mergeASTs(files ...*ast.File) *ast.File {
 					newFile.Decls = append(newFile.Decls, decl)
 				}
 			case *ast.FuncDecl:
-				funcMap[t.Name.Name] = t
+				key := t.Name.Name // Default key is the function name
+				if t.Recv != nil && len(t.Recv.List) > 0 {
+					if starExpr, ok := t.Recv.List[0].Type.(*ast.StarExpr); ok {
+						if ident, ok := starExpr.X.(*ast.Ident); ok {
+							key = ident.Name + "__" + t.Name.Name
+						}
+					} else if ident, ok := t.Recv.List[0].Type.(*ast.Ident); ok {
+						key = ident.Name + "__" + t.Name.Name
+					}
+				}
+				funcMap[key] = t
 			default:
 				newFile.Decls = append(newFile.Decls, decl)
 			}
