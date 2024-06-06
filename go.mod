@@ -6,7 +6,6 @@ go 1.22.1
 
 require (
 	github.com/bartdeboer/script/v2 v2.0.0
-	github.com/bitfield/script v0.22.0
 	github.com/traefik/yaegi v0.16.1
 )
 
