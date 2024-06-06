@@ -5,7 +5,7 @@ Runtask is a task runner that enables writing Taskfile scripts in Go.
 Install runtask globally:
 
 ```
-go install github.com/bartdeboer/runtask@latest
+go install github.com/bartdeboer/runtask/cmd/runtask@latest
 ```
 
 and start writing your Taskfiles anywhere. Any capitalized function should be

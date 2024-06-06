@@ -1,4 +1,4 @@
-package main
+package runtask
 
 // Prevent conflicts
 import (

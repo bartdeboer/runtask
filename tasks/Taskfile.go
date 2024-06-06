@@ -1,7 +1,7 @@
 package tasks
 
 import (
-	"github.com/bitfield/script"
+	"github.com/bartdeboer/script/v2"
 )
 
 // Run tests using bitfield/script

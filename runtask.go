@@ -1,4 +1,4 @@
-package main
+package runtask
 
 import (
 	"embed"
@@ -97,16 +97,9 @@ func RunTask() error {
 		return fmt.Errorf("failed to reference task function %s: %v", functionName, err)
 	}
 
-	_, err = callFunc(v, args)
+	_, err = CallFunc(v, args)
 	if err != nil {
 		return fmt.Errorf("failed to call task function %s: %v", functionName, err)
 	}
 	return nil
-}
-
-func main() {
-	if err := RunTask(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
-		os.Exit(1)
-	}
 }

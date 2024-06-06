@@ -1,4 +1,4 @@
-package main_test
+package runtask_test
 
 import (
 	"fmt"

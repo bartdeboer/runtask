@@ -1,4 +1,4 @@
-package main
+package runtask
 
 import (
 	"fmt"
@@ -44,7 +44,7 @@ func convertToType(value string, targetType reflect.Type) (reflect.Value, error)
 	return convertedValue, nil
 }
 
-func callFunc(fn reflect.Value, args []string) ([]reflect.Value, error) {
+func CallFunc(fn reflect.Value, args []string) ([]reflect.Value, error) {
 	var inArgs []reflect.Value
 	fnType := fn.Type()
 	numArgs := fnType.NumIn()
